@@ -1,7 +1,7 @@
-// import { useUserContext } from "@/AuthContext";
+import { useUserContext } from "@/AuthContext";
 import { Button } from "../ui/button";
 import AuthLayout from "./AuthLayout";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { paths } from "@/paths";
 import ThemeToggleMenu from "../ThemeToggleBtn";
 import {
@@ -23,6 +23,12 @@ import { useForm } from "react-hook-form";
 import { Input } from "../ui/input";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { graphql } from "relay-runtime";
+import { useMutation } from "react-relay";
+import type { SignInMutation } from "./__generated__/SignInMutation.graphql";
+import LoadingSpinner from "../Spinner";
+import { getStorage, setStorage } from "@/utils/sessionStorage";
+import { useEffect } from "react";
 
 const LoginSchema = z.object({
   email: z
@@ -37,8 +43,9 @@ const LoginSchema = z.object({
 });
 
 export default function SignIn() {
-  // const { setUser } = useUserContext();
-  // const navigate = useNavigate();
+  const { setUser } = useUserContext();
+  const stored_user = getStorage("user");
+  const navigate = useNavigate();
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
@@ -47,8 +54,63 @@ export default function SignIn() {
     },
   });
 
+  const LoginQuery = graphql`
+    mutation SignInMutation($userInput: UserInput) {
+      login(userInput: $userInput) {
+        id
+        firstname
+        tax_id
+        createdAt
+        token
+      }
+    }
+  `;
+  const [commitMutation, isMutationInFlight] =
+    useMutation<SignInMutation>(LoginQuery);
+
   function onSubmit(data: z.infer<typeof LoginSchema>) {
-    console.log(data);
+    commitMutation({
+      variables: {
+        userInput: {
+          email: "1234545556",
+          password: data.password,
+        },
+      },
+      onCompleted({ login }) {
+        setUser({
+          id: parseInt(login.id),
+          firstName: login.firstname,
+          tax_id: login.tax_id,
+          isValid: true,
+        });
+        setStorage(
+          "user",
+          JSON.stringify({
+            id: parseInt(login.id),
+            firstName: login.firstname,
+            tax_id: login.tax_id,
+            isValid: true,
+          })
+        );
+        setStorage("token", login.token);
+        navigate(paths.dashboard.overview);
+      },
+      onError(error) {
+        console.error(error);
+      },
+    });
+  }
+
+  useEffect(() => {
+    if (stored_user) {
+      const userObj = JSON.parse(stored_user);
+      setUser({ ...userObj });
+      navigate(paths.dashboard.overview);
+    }
+  }, [stored_user]);
+
+  if (isMutationInFlight) {
+    return <LoadingSpinner />;
   }
 
   return (

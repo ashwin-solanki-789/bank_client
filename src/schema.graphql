@@ -1,0 +1,58 @@
+type User {
+  id: ID!
+  firstname: String!
+  lastname: String!
+  email: String!
+  tax_id: String!
+  password: String
+  accounts: [Account]
+  createdAt: String
+}
+
+type PublicUser {
+  id: ID!
+  firstname: String!
+  lastname: String!
+  email: String!
+  tax_id: String!
+  createdAt: String!
+  token: String!
+}
+
+type Query {
+  getUser: User!
+  getAccountDetails(account_number: Int!): Account
+  getAllAccountBasedOnUserID(user_id: ID!): [Account]
+}
+
+type Mutation {
+  login(userInput: UserInput): PublicUser!
+  register(registerInput: RegisterInput): PublicUser!
+  addAccount(account: AccountInput): Account
+  deleteAccount(account_number: Int!): String
+}
+
+input RegisterInput {
+  firstname: String!
+  lastname: String!
+  email: String!
+  password: String!
+  tax_id: String!
+}
+
+input UserInput {
+  email: String!
+  password: String!
+}
+
+type Account {
+  id: ID!
+  account_number: Int!
+  user: User!
+  balance: Float!
+}
+
+input AccountInput {
+  account_number: Int!
+  balance: Float!
+}
