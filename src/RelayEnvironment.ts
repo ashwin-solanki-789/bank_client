@@ -4,10 +4,24 @@ import {
   RecordSource,
   Store,
   FetchFunction,
+  // SubscribeFunction,
+  // RequestParameters,
+  // Variables,
+  // Observable,
 } from "relay-runtime";
 import { getStorage } from "./utils/sessionStorage";
+// import { createClient } from "graphql-ws";
 
 const HTTP_ENDPOINT = import.meta.env.VITE_GRAPHQL_ENDPOINT;
+
+// const wsClient = createClient({
+//   url: "ws://localhost:4000/graphql",
+//   connectionParams: () => {
+//     return {
+//       Authorization: `Bearer ${getStorage("token")}`,
+//     };
+//   },
+// });
 
 const fetchFn: FetchFunction = async (request, variables) => {
   const resp = await fetch(HTTP_ENDPOINT, {
@@ -25,11 +39,28 @@ const fetchFn: FetchFunction = async (request, variables) => {
     }),
   });
 
-  return await resp.json();
+  return resp.json();
 };
+
+// const subscribe: SubscribeFunction = (
+//   operation: RequestParameters,
+//   variables: Variables
+// ): Observable<any> => {
+//   return Observable.create((sink) => {
+//     return wsClient.subscribe(
+//       {
+//         operationName: operation.name,
+//         query: operation.text as string,
+//         variables,
+//       },
+//       sink
+//     );
+//   });
+// };
 
 function createRelayEnvironment() {
   return new Environment({
+    // network: Network.create(fetchFn, subscribe),
     network: Network.create(fetchFn),
     store: new Store(new RecordSource()),
   });

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<fa41b78e6468066b18b8edfdeb5a6d9e>>
+ * @generated SignedSource<<a5cfe28b2e934941357cbc796a1359c6>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,12 +9,12 @@
 // @ts-nocheck
 
 import { ConcreteRequest, Mutation } from 'relay-runtime';
-export type UserInput = {
+export type LoginInput = {
   email: string;
   password: string;
 };
 export type SignInMutation$variables = {
-  userInput?: UserInput | null | undefined;
+  userInput?: LoginInput | null | undefined;
 };
 export type SignInMutation$data = {
   readonly login: {
@@ -22,7 +22,7 @@ export type SignInMutation$data = {
     readonly firstname: string;
     readonly id: string;
     readonly tax_id: string;
-    readonly token: string;
+    readonly token: string | null | undefined;
   };
 };
 export type SignInMutation = {
@@ -110,16 +110,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "c466bbf0e1d989776774b3cc418c38ad",
+    "cacheID": "bc1825e75492a93ea8812a2c6e559971",
     "id": null,
     "metadata": {},
     "name": "SignInMutation",
     "operationKind": "mutation",
-    "text": "mutation SignInMutation(\n  $userInput: UserInput\n) {\n  login(userInput: $userInput) {\n    id\n    firstname\n    tax_id\n    createdAt\n    token\n  }\n}\n"
+    "text": "mutation SignInMutation(\n  $userInput: LoginInput\n) {\n  login(userInput: $userInput) {\n    id\n    firstname\n    tax_id\n    createdAt\n    token\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "8797a27eafdeee2ff9fc23ccd0880bb9";
+(node as any).hash = "df3b2a090239b907b7fe8a433a2520a7";
 
 export default node;

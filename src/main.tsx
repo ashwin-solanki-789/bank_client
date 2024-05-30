@@ -8,6 +8,7 @@ import { BrowserRouter } from "react-router-dom";
 import { UserContextProvider } from "./AuthContext.tsx";
 import { ThemeProvider } from "./components/ThemeProvider.tsx";
 import LoadingSpinner from "./components/Spinner.tsx";
+// import ErrorBoundary from "./ErrorBoundary.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <RelayEnvironmentProvider environment={RelayEnvironment}>

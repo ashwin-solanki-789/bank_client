@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ace584be40ef0a73bc3d6434cb2b0b98>>
+ * @generated SignedSource<<83edb76ccc0c3cb61caca59c1e5a10eb>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -25,9 +25,9 @@ export type SignUpMutation$data = {
     readonly email: string;
     readonly firstname: string;
     readonly id: string;
-    readonly lastname: string;
+    readonly lastname: string | null | undefined;
     readonly tax_id: string;
-    readonly token: string;
+    readonly token: string | null | undefined;
   };
 };
 export type SignUpMutation = {

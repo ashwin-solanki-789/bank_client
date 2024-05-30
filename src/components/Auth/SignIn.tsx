@@ -55,7 +55,7 @@ export default function SignIn() {
   });
 
   const LoginQuery = graphql`
-    mutation SignInMutation($userInput: UserInput) {
+    mutation SignInMutation($userInput: LoginInput) {
       login(userInput: $userInput) {
         id
         firstname
@@ -72,7 +72,7 @@ export default function SignIn() {
     commitMutation({
       variables: {
         userInput: {
-          email: "1234545556",
+          email: data.email,
           password: data.password,
         },
       },

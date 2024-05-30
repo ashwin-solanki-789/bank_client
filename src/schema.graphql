@@ -1,3 +1,7 @@
+type Error {
+  status_code: Int!
+  message: String!
+}
 type User {
   id: ID!
   firstname: String!
@@ -8,28 +12,36 @@ type User {
   accounts: [Account]
   createdAt: String
 }
-
+union UserResult = User | Error
 type PublicUser {
   id: ID!
   firstname: String!
-  lastname: String!
+  lastname: String
   email: String!
   tax_id: String!
   createdAt: String!
-  token: String!
+  token: String
 }
 
 type Query {
-  getUser: User!
-  getAccountDetails(account_number: Int!): Account
-  getAllAccountBasedOnUserID(user_id: ID!): [Account]
+  getUser: UserResult!
+  getAccountDetails(account_number: Int!): Account!
+  getAllAccountBasedOnUserID(user_id: ID!): [Account!]
+  getAllTransaction(account_id: Int!, status: TransactionStatus): [Transaction]
 }
 
 type Mutation {
-  login(userInput: UserInput): PublicUser!
+  login(userInput: LoginInput): PublicUser!
   register(registerInput: RegisterInput): PublicUser!
-  addAccount(account: AccountInput): Account
-  deleteAccount(account_number: Int!): String
+  deleteUser: Boolean!
+  createAnotherAccount: Account!
+  deleteAccount(account_number: Int!): Boolean!
+  createTransaction(transaction_details: sendMoneyInput!): Transaction!
+  updateTransaction(
+    transaction_id: ID!
+    status: TransactionStatus!
+  ): Transaction!
+  deleteTransaction(id: ID!): Transaction!
 }
 
 input RegisterInput {
@@ -40,7 +52,7 @@ input RegisterInput {
   tax_id: String!
 }
 
-input UserInput {
+input LoginInput {
   email: String!
   password: String!
 }
@@ -48,11 +60,56 @@ input UserInput {
 type Account {
   id: ID!
   account_number: Int!
-  user: User!
+  userId: ID!
   balance: Float!
+  createdAt: String!
 }
 
-input AccountInput {
+type PublicAccount {
+  id: ID!
   account_number: Int!
-  balance: Float!
+  userId: ID!
+  User: PublicUser!
+  createdAt: String!
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
+  DELETED
+}
+
+enum TransactionType {
+  REQUEST
+  NORMAL
+}
+
+type Transaction {
+  id: ID!
+  senderId: Int!
+  receiverId: Int!
+  sender: PublicAccount!
+  receiver: PublicAccount!
+  amount: Float!
+  description: String
+  status: TransactionStatus!
+  type: TransactionType!
+  createdAt: String
+  updatedAt: String
+}
+
+input sendMoneyInput {
+  sender: Int!
+  receiver: Int!
+  amount: Int!
+  type: TransactionType!
+  description: String
+}
+
+type msg {
+  data: String
+}
+type Subscription {
+  greetings(msg: String): msg
 }
