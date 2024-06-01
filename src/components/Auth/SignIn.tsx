@@ -29,6 +29,7 @@ import type { SignInMutation } from "./__generated__/SignInMutation.graphql";
 import LoadingSpinner from "../Spinner";
 import { getStorage, setStorage } from "@/utils/sessionStorage";
 import { useEffect } from "react";
+import { useErrorContext } from "../ErrorProvider";
 
 const LoginSchema = z.object({
   email: z
@@ -44,7 +45,9 @@ const LoginSchema = z.object({
 
 export default function SignIn() {
   const { setUser } = useUserContext();
+  const { error, setError } = useErrorContext();
   const stored_user = getStorage("user");
+  // const [error, setError] = useState("");
   const navigate = useNavigate();
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
@@ -58,10 +61,12 @@ export default function SignIn() {
     mutation SignInMutation($userInput: LoginInput) {
       login(userInput: $userInput) {
         id
+        token
         firstname
+        lastname
+        email
         tax_id
         createdAt
-        token
       }
     }
   `;
@@ -92,11 +97,16 @@ export default function SignIn() {
             isValid: true,
           })
         );
+        if (!login.token) {
+          setError({ code: 404, message: "Failed to fetch token" });
+          return;
+        }
         setStorage("token", login.token);
         navigate(paths.dashboard.overview);
       },
       onError(error) {
-        console.error(error);
+        console.log(error.name);
+        console.log(error.message.split(":")[1]);
       },
     });
   }
@@ -114,7 +124,7 @@ export default function SignIn() {
   }
 
   return (
-    <AuthLayout>
+    <AuthLayout error="Incorrect email or password">
       <div className="flex flex-col min-h-screen">
         <div className="p-5 flex justify-end">
           <ThemeToggleMenu />
@@ -156,6 +166,7 @@ export default function SignIn() {
                       </FormItem>
                     )}
                   />
+                  {error && <p>{error.message}</p>}
                   <div className="flex flex-col gap-2">
                     <Button type="submit" className="w-full">
                       Login

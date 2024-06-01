@@ -117,6 +117,9 @@ export default function SignUp() {
             isValid: true,
           })
         );
+        if (!register.token) {
+          return;
+        }
         setStorage("token", register.token);
         navigate(paths.dashboard.overview);
       },
@@ -128,7 +131,7 @@ export default function SignUp() {
   }
 
   return (
-    <AuthLayout>
+    <AuthLayout error="">
       <div className="flex flex-col min-h-screen">
         <div className="p-5 flex justify-end">
           <ThemeToggleMenu />

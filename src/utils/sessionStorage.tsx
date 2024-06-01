@@ -1,5 +1,5 @@
-export function setStorage(key: string, value: string) {
-  if (!key) {
+export function setStorage(key: string, value: string | undefined) {
+  if (!key || !value) {
     throw new Error("key cannot be empty!");
   }
   localStorage.setItem(key, value);

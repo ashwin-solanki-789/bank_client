@@ -115,7 +115,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           </DropdownMenu>
         </div>
       </header>
-      {children}
+      <div className="w-5/6 mx-auto py-10">{children}</div>
     </div>
   );
 }

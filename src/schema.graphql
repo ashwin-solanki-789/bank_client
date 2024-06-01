@@ -13,6 +13,7 @@ type User {
   createdAt: String
 }
 union UserResult = User | Error
+
 type PublicUser {
   id: ID!
   firstname: String!
