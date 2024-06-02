@@ -127,7 +127,6 @@ export default function SignUp() {
         console.log(error);
       },
     });
-    console.log(data);
   }
 
   return (

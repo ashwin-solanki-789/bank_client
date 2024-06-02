@@ -26,17 +26,23 @@ type PublicUser {
 
 type Query {
   getUser: UserResult!
+
   getAccountDetails(account_number: Int!): Account!
   getAllAccountBasedOnUserID(user_id: ID!): [Account!]
+
   getAllTransaction(account_id: Int!, status: TransactionStatus): [Transaction]
+  transactionStats(account_id: Int!): TransactionsStats
 }
 
 type Mutation {
   login(userInput: LoginInput): PublicUser!
   register(registerInput: RegisterInput): PublicUser!
   deleteUser: Boolean!
+
   createAnotherAccount: Account!
   deleteAccount(account_number: Int!): Boolean!
+  verifyAccount(account_number: Int!): Boolean!
+
   createTransaction(transaction_details: sendMoneyInput!): Transaction!
   updateTransaction(
     transaction_id: ID!
@@ -106,6 +112,11 @@ input sendMoneyInput {
   amount: Int!
   type: TransactionType!
   description: String
+}
+
+type TransactionsStats {
+  total_send: Float
+  total_received: Float
 }
 
 type msg {

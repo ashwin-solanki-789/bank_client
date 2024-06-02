@@ -1,8 +1,7 @@
 import { paths } from "@/paths";
-import { CircleUser, Menu, Package2 } from "lucide-react";
+import { CircleUser, Package2 } from "lucide-react";
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import { Button } from "../ui/button";
 import {
   DropdownMenu,
@@ -36,66 +35,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             <Package2 className="h-6 w-6" />
             <span className="sr-only">Vi Bank Inc</span>
           </Link>
-          <Link
-            to={paths.dashboard.overview}
-            className="text-muted-foreground transition-colors hover:text-foreground"
-          >
-            Dashboard
-          </Link>
-          <Link
-            to={paths.dashboard.account}
-            className="text-muted-foreground transition-colors hover:text-foreground"
-          >
-            Account
-          </Link>
-          <Link
-            to={paths.dashboard.settings}
-            className="text-muted-foreground transition-colors hover:text-foreground"
-          >
-            Setting
-          </Link>
         </nav>
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button
-              variant={"outline"}
-              size={"icon"}
-              className="shrink-0 md:hidden"
-            >
-              <Menu className="h-5 w-5" />
-              <span className="sr-only">Toggle navigation menu</span>
-            </Button>
-          </SheetTrigger>
-          <SheetContent side={"left"}>
-            <nav className="grid gap-6 text-lg font-medium">
-              <Link
-                to={paths.home}
-                className="flex items-center gap-2 text-lg font-semibold"
-              >
-                <Package2 className="h-6 w-6" />
-                <span className="sr-only">Vi Bank Inc</span>
-              </Link>
-              <Link
-                to={paths.dashboard.overview}
-                className="text-muted-foreground hover:text-foreground"
-              >
-                Dashboard
-              </Link>
-              <Link
-                to={paths.dashboard.account}
-                className="text-muted-foreground hover:text-foreground"
-              >
-                Account
-              </Link>
-              <Link
-                to={paths.dashboard.settings}
-                className="text-muted-foreground hover:text-foreground"
-              >
-                Setting
-              </Link>
-            </nav>
-          </SheetContent>
-        </Sheet>
         <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4 justify-end">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

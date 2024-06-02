@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<59dc7aca354b6a1b2b10a07dfc2795b4>>
+ * @generated SignedSource<<0bf3a557bf702f40749d491aa25b928f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,6 +12,10 @@ import { ConcreteRequest, Query } from 'relay-runtime';
 export type OverviewQuery$variables = Record<PropertyKey, never>;
 export type OverviewQuery$data = {
   readonly getUser: {
+    readonly accounts?: ReadonlyArray<{
+      readonly account_number: number;
+      readonly balance: number;
+    } | null | undefined> | null | undefined;
     readonly email?: string;
     readonly id?: string;
     readonly message?: string;
@@ -26,34 +30,41 @@ export type OverviewQuery = {
 
 const node: ConcreteRequest = (function(){
 var v0 = {
-  "kind": "InlineFragment",
-  "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "id",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "email",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "tax_id",
-      "storageKey": null
-    }
-  ],
-  "type": "User",
-  "abstractKey": null
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
 },
 v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "email",
+  "storageKey": null
+},
+v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "tax_id",
+  "storageKey": null
+},
+v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "account_number",
+  "storageKey": null
+},
+v4 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "balance",
+  "storageKey": null
+},
+v5 = {
   "kind": "InlineFragment",
   "selections": [
     {
@@ -89,8 +100,30 @@ return {
         "name": "getUser",
         "plural": false,
         "selections": [
-          (v0/*: any*/),
-          (v1/*: any*/)
+          {
+            "kind": "InlineFragment",
+            "selections": [
+              (v0/*: any*/),
+              (v1/*: any*/),
+              (v2/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "Account",
+                "kind": "LinkedField",
+                "name": "accounts",
+                "plural": true,
+                "selections": [
+                  (v3/*: any*/),
+                  (v4/*: any*/)
+                ],
+                "storageKey": null
+              }
+            ],
+            "type": "User",
+            "abstractKey": null
+          },
+          (v5/*: any*/)
         ],
         "storageKey": null
       }
@@ -119,24 +152,47 @@ return {
             "name": "__typename",
             "storageKey": null
           },
-          (v0/*: any*/),
-          (v1/*: any*/)
+          {
+            "kind": "InlineFragment",
+            "selections": [
+              (v0/*: any*/),
+              (v1/*: any*/),
+              (v2/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "Account",
+                "kind": "LinkedField",
+                "name": "accounts",
+                "plural": true,
+                "selections": [
+                  (v3/*: any*/),
+                  (v4/*: any*/),
+                  (v0/*: any*/)
+                ],
+                "storageKey": null
+              }
+            ],
+            "type": "User",
+            "abstractKey": null
+          },
+          (v5/*: any*/)
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "b6fc0beee5b71d93c1cd404d89875863",
+    "cacheID": "53c5201d082df76c7f3574d86f548e67",
     "id": null,
     "metadata": {},
     "name": "OverviewQuery",
     "operationKind": "query",
-    "text": "query OverviewQuery {\n  getUser {\n    __typename\n    ... on User {\n      id\n      email\n      tax_id\n    }\n    ... on Error {\n      status_code\n      message\n    }\n  }\n}\n"
+    "text": "query OverviewQuery {\n  getUser {\n    __typename\n    ... on User {\n      id\n      email\n      tax_id\n      accounts {\n        account_number\n        balance\n        id\n      }\n    }\n    ... on Error {\n      status_code\n      message\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "b2825491dc9407904adfc16f85414981";
+(node as any).hash = "20d306ab5458b4811974785298b0e381";
 
 export default node;
