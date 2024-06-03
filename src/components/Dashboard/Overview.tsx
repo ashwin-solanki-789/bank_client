@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { OverviewComponent } from "./OverviewComponents";
 import NewTransactionDialog from "./OverviewComponents/NewTransactionDialog";
 import { Suspense } from "react";
+import Transactions from "./Transactions/Transactions";
 // import type { OverviewGreetingSubscription } from "./__generated__/OverviewGreetingSubscription.graphql";
 
 export default function Overview() {
@@ -63,7 +64,7 @@ export default function Overview() {
         <div className="flex justify-between">
           <TabsList className="grid grid-cols-2 gap-6 w-2/6">
             <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="notification">Notifications</TabsTrigger>
+            <TabsTrigger value="transactions">Transactions</TabsTrigger>
           </TabsList>
           <div id="buttonGroup" className="flex items-center">
             <NewTransactionDialog
@@ -83,13 +84,17 @@ export default function Overview() {
         </div>
         <TabsContent value="overview">
           <Suspense fallback={<h1>loading...</h1>}>
-            {data?.getUser?.accounts && data?.getUser?.accounts.length > 0 ? (
+            {data?.getUser?.accounts && data?.getUser?.accounts?.length > 0 ? (
               <OverviewComponent account={data.getUser.accounts[0]} />
             ) : null}
           </Suspense>
         </TabsContent>
-        <TabsContent value="notification">
-          <p>Notification</p>
+        <TabsContent value="transactions">
+          {data?.getUser?.accounts && data?.getUser?.accounts?.[0] ? (
+            <Transactions
+              account_id={data.getUser.accounts[0]?.account_number}
+            />
+          ) : null}
         </TabsContent>
       </Tabs>
     </DashboardLayout>

@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+// import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -16,7 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
+// import { ScrollArea } from "@/components/ui/scroll-area";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -316,7 +316,7 @@ export default function NewTransactionDialog({
                   </FormItem>
                 )}
               />
-              {type === "REQUEST" && (
+              {/* {type === "REQUEST" && (
                 <>
                   <p className="mt-5 font-sans text-xl">Recents</p>
                   <ScrollArea className="h-[150px]">
@@ -386,7 +386,7 @@ export default function NewTransactionDialog({
                     </div>
                   </ScrollArea>
                 </>
-              )}
+              )} */}
               <Button
                 type="submit"
                 className="mt-5 w-full"

@@ -19,8 +19,16 @@ interface PropsInterface {
 
 export const OverviewComponent: React.FC<PropsInterface> = ({ account }) => {
   const transaction_details = graphql`
-    query OverviewComponentsQuery($account_id: Int!) {
-      getAllTransaction(account_id: $account_id, status: COMPLETED) {
+    query OverviewComponentsQuery(
+      $account_id: Int!
+      $status: TransactionStatus
+      $length: Int
+    ) {
+      getAllTransaction(
+        account_id: $account_id
+        status: $status
+        length: $length
+      ) {
         id
         status
         type
@@ -54,10 +62,8 @@ export const OverviewComponent: React.FC<PropsInterface> = ({ account }) => {
 
   const transactions = useLazyLoadQuery<OverviewComponentsQuery>(
     transaction_details,
-    { account_id: account?.account_number }
+    { account_id: account?.account_number, status: "COMPLETED", length: 5 }
   );
-
-  console.log(transactions);
 
   return (
     <Suspense fallback={<h1>Loading...</h1>}>
@@ -104,35 +110,35 @@ export const OverviewComponent: React.FC<PropsInterface> = ({ account }) => {
           <div className="w-6/12 py-3">
             <Card>
               <CardHeader>
-                <h1>Recent Transactions</h1>
+                <h1>Recent Transactions - Completed</h1>
               </CardHeader>
               <CardContent>
-                {/* <h1 className="font-sans font-bold text-2xl">
-                  No Transactions Found.
-                </h1> */}
                 <div className="flex gap-6 flex-col">
-                  {transactions.getAllTransaction
-                    ? transactions.getAllTransaction.map(
-                        (transaction, index) => (
-                          <TransactionCard
-                            type={
-                              account.account_number ===
-                              transaction?.sender.account_number
-                                ? "sender"
-                                : "received"
-                            }
-                            details={
-                              account.account_number ===
-                              transaction?.sender.account_number
-                                ? transaction.receiver.User
-                                : transaction?.sender.User
-                            }
-                            amount={transaction?.amount}
-                            key={index}
-                          />
-                        )
-                      )
-                    : null}
+                  {transactions.getAllTransaction &&
+                  transactions.getAllTransaction?.length > 0 ? (
+                    transactions.getAllTransaction.map((transaction, index) => (
+                      <TransactionCard
+                        type={
+                          account.account_number ===
+                          transaction?.sender.account_number
+                            ? "sender"
+                            : "received"
+                        }
+                        details={
+                          account.account_number ===
+                          transaction?.sender.account_number
+                            ? transaction.receiver.User
+                            : transaction?.sender.User
+                        }
+                        amount={transaction?.amount}
+                        key={index}
+                      />
+                    ))
+                  ) : (
+                    <h1 className="font-sans font-bold text-2xl">
+                      No Transactions Found.
+                    </h1>
+                  )}
                 </div>
               </CardContent>
             </Card>
