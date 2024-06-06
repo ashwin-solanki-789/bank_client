@@ -9,6 +9,7 @@ import React, { Suspense } from "react";
 import { graphql } from "relay-runtime";
 import type { OverviewComponentsQuery } from "./__generated__/OverviewComponentsQuery.graphql";
 import { useLazyLoadQuery } from "react-relay";
+import Chart from "./Chart";
 
 interface PropsInterface {
   account: {
@@ -103,7 +104,15 @@ export const OverviewComponent: React.FC<PropsInterface> = ({ account }) => {
           <div className="w-6/12 py-3">
             <Card>
               <CardHeader>
-                <h1>Charts</h1>
+                {transactions.getAllTransaction &&
+                transactions.getAllTransaction.length > 0 ? (
+                  <Chart
+                    dataset={transactions.getAllTransaction}
+                    account_id={account?.account_number}
+                  />
+                ) : (
+                  <h1>No Transaction found.</h1>
+                )}
               </CardHeader>
             </Card>
           </div>

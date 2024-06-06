@@ -26,6 +26,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import type { Transactions_UpdateMutation } from "./__generated__/Transactions_UpdateMutation.graphql";
+import moment from "moment";
 
 interface Props {
   account_id: number;
@@ -137,7 +138,7 @@ export default function Transactions({ account_id }: Props) {
           Previous
         </Button>
         <Button
-          disabled={currentPage === Math.ceil(10 / DEFAULT_LENGTH)}
+          disabled={currentPage === Math.ceil(data?.paginationTransaction?.total / DEFAULT_LENGTH)}
           onClick={() => setCurrentPage((prev) => prev + 1)}
         >
           Next
@@ -280,9 +281,15 @@ function TransactionCard({
           </DropdownMenu>
         </div>
       </div>
-      <div className="mt-3 font-sans font-bold text-lg">
-        <span className="text-xl underline">Description</span> :{" "}
-        {data.description}
+      <div className="mt-3 font-sans font-bold text-lg flex justify-between items-center">
+        <div>
+          <span className="text-xl underline">Description</span> :{" "}
+          {data.description}
+        </div>
+        <div>
+          <span className="text-xl underline">Date</span> :{" "}
+          {moment(parseInt(data.createdAt)).format("DD-MM-YYYY HH:mm")}
+        </div>
       </div>
     </Card>
   );

@@ -22,8 +22,12 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { graphql, useMutation } from "react-relay";
 import { z } from "zod";
-import type { NewTransactionDialogMutation } from "./__generated__/NewTransactionDialogMutation.graphql";
+import type {
+  NewTransactionDialogMutation,
+  NewTransactionDialogMutation$data,
+} from "./__generated__/NewTransactionDialogMutation.graphql";
 import type { NewTransactionDialog_CreateMutation } from "./__generated__/NewTransactionDialog_CreateMutation.graphql";
+import { RecordSourceSelectorProxy } from "relay-runtime";
 interface ComponentsProps {
   type: string;
   header: string;
@@ -179,6 +183,18 @@ export default function NewTransactionDialog({
         form.clearErrors("account_number");
         setIsVerified(true);
       },
+      // updater(store: RecordSourceSelectorProxy) {
+      //   const s = store.get("66559a63f6763bc98f77851f");
+      //   // const payload = store.getRootField("verifyAccount");
+      //   // if (!payload) {
+      //   //   return;
+      //   // }
+      //   // const a = store.getRootField("verifyAccount");
+      //   const fn = s?.getValue("email");
+
+      //   console.log({ store, s, fn });
+      //   return;
+      // },
     });
   }
 
