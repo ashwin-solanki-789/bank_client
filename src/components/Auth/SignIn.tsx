@@ -171,12 +171,12 @@ export default function SignIn() {
                     <Button type="submit" className="w-full">
                       Login
                     </Button>
-                    <a
+                    {/* <a
                       className="hover:underline"
                       href={paths.auth.resetPassword}
                     >
                       Forget password?
-                    </a>
+                    </a> */}
                   </div>
                 </form>
               </Form>

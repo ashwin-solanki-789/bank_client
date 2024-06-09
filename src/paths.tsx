@@ -8,7 +8,8 @@ export const paths = {
   dashboard: {
     overview: "/dashboard",
     account: "/dashboard/account",
-    settings: "/dashboard/settings",
+    support: "/dashboard/support",
+    profile: "/dashboard/profile",
   },
   errors: {
     notFound: "/errors/not-found",

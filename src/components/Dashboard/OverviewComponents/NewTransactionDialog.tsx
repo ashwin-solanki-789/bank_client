@@ -16,18 +16,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-// import { ScrollArea } from "@/components/ui/scroll-area";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { graphql, useMutation } from "react-relay";
 import { z } from "zod";
-import type {
-  NewTransactionDialogMutation,
-  NewTransactionDialogMutation$data,
-} from "./__generated__/NewTransactionDialogMutation.graphql";
+import type { NewTransactionDialogMutation } from "./__generated__/NewTransactionDialogMutation.graphql";
 import type { NewTransactionDialog_CreateMutation } from "./__generated__/NewTransactionDialog_CreateMutation.graphql";
-import { RecordSourceSelectorProxy } from "relay-runtime";
 interface ComponentsProps {
   type: string;
   header: string;
@@ -183,18 +178,6 @@ export default function NewTransactionDialog({
         form.clearErrors("account_number");
         setIsVerified(true);
       },
-      // updater(store: RecordSourceSelectorProxy) {
-      //   const s = store.get("66559a63f6763bc98f77851f");
-      //   // const payload = store.getRootField("verifyAccount");
-      //   // if (!payload) {
-      //   //   return;
-      //   // }
-      //   // const a = store.getRootField("verifyAccount");
-      //   const fn = s?.getValue("email");
-
-      //   console.log({ store, s, fn });
-      //   return;
-      // },
     });
   }
 
@@ -257,7 +240,7 @@ export default function NewTransactionDialog({
       <DialogTrigger>
         <Button variant={"link"}>{btnLabel}</Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="w-5/6 lg:w-full">
         <DialogHeader>
           <DialogTitle>{header}</DialogTitle>
         </DialogHeader>
@@ -332,77 +315,6 @@ export default function NewTransactionDialog({
                   </FormItem>
                 )}
               />
-              {/* {type === "REQUEST" && (
-                <>
-                  <p className="mt-5 font-sans text-xl">Recents</p>
-                  <ScrollArea className="h-[150px]">
-                    <div className="grid grid-cols-3 mt-5 gap-5">
-                      <div className="flex justify-center flex-col items-center">
-                        <Avatar className="cursor-pointer">
-                          <AvatarFallback>AS</AvatarFallback>
-                        </Avatar>
-                        <p className="font-sans text-sm">Ashwin Solanki</p>
-                      </div>
-
-                      <div className="flex justify-center flex-col items-center cursor-pointer">
-                        <Avatar className="">
-                          <AvatarFallback>AS</AvatarFallback>
-                        </Avatar>
-                        <p className="font-sans text-sm">Ashwin Solanki</p>
-                      </div>
-
-                      <div className="flex justify-center flex-col items-center cursor-pointer">
-                        <Avatar className="">
-                          <AvatarFallback>AS</AvatarFallback>
-                        </Avatar>
-                        <p className="font-sans text-sm">Ashwin Solanki</p>
-                      </div>
-                      <div className="flex justify-center flex-col items-center cursor-pointer">
-                        <Avatar className="">
-                          <AvatarFallback>AS</AvatarFallback>
-                        </Avatar>
-                        <p className="font-sans text-sm">Ashwin Solanki</p>
-                      </div>
-                      <div className="flex justify-center flex-col items-center cursor-pointer">
-                        <Avatar className="">
-                          <AvatarFallback>AS</AvatarFallback>
-                        </Avatar>
-                        <p className="font-sans text-sm">Ashwin Solanki</p>
-                      </div>
-                      <div className="flex justify-center flex-col items-center cursor-pointer">
-                        <Avatar className="">
-                          <AvatarFallback>AS</AvatarFallback>
-                        </Avatar>
-                        <p className="font-sans text-sm">Ashwin Solanki</p>
-                      </div>
-                      <div className="flex justify-center flex-col items-center cursor-pointer">
-                        <Avatar className="">
-                          <AvatarFallback>AS</AvatarFallback>
-                        </Avatar>
-                        <p className="font-sans text-sm">Ashwin Solanki</p>
-                      </div>
-                      <div className="flex justify-center flex-col items-center cursor-pointer">
-                        <Avatar className="">
-                          <AvatarFallback>AS</AvatarFallback>
-                        </Avatar>
-                        <p className="font-sans text-sm">Ashwin Solanki</p>
-                      </div>
-                      <div className="flex justify-center flex-col items-center cursor-pointer">
-                        <Avatar className="">
-                          <AvatarFallback>AS</AvatarFallback>
-                        </Avatar>
-                        <p className="font-sans text-sm">Ashwin Solanki</p>
-                      </div>
-                      <div className="flex justify-center flex-col items-center cursor-pointer">
-                        <Avatar className="">
-                          <AvatarFallback>AS</AvatarFallback>
-                        </Avatar>
-                        <p className="font-sans text-sm">Ashwin Solanki</p>
-                      </div>
-                    </div>
-                  </ScrollArea>
-                </>
-              )} */}
               <Button
                 type="submit"
                 className="mt-5 w-full"

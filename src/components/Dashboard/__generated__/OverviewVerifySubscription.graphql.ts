@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<42e18bbb2a9ff113bf91b94f8aedbf4a>>
+ * @generated SignedSource<<8be50bcb29609108cba3dd94ddb45193>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,15 +9,15 @@
 // @ts-nocheck
 
 import { ConcreteRequest, GraphQLSubscription } from 'relay-runtime';
-export type OverviewGreetingSubscription$variables = {
-  email: string;
+export type OverviewVerifySubscription$variables = {
+  account_number: number;
 };
-export type OverviewGreetingSubscription$data = {
-  readonly greetings: string | null | undefined;
+export type OverviewVerifySubscription$data = {
+  readonly verify: boolean | null | undefined;
 };
-export type OverviewGreetingSubscription = {
-  response: OverviewGreetingSubscription$data;
-  variables: OverviewGreetingSubscription$variables;
+export type OverviewVerifySubscription = {
+  response: OverviewVerifySubscription$data;
+  variables: OverviewVerifySubscription$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -25,7 +25,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "email"
+    "name": "account_number"
   }
 ],
 v1 = [
@@ -34,12 +34,12 @@ v1 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "email",
-        "variableName": "email"
+        "name": "account_number",
+        "variableName": "account_number"
       }
     ],
     "kind": "ScalarField",
-    "name": "greetings",
+    "name": "verify",
     "storageKey": null
   }
 ];
@@ -48,7 +48,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "OverviewGreetingSubscription",
+    "name": "OverviewVerifySubscription",
     "selections": (v1/*: any*/),
     "type": "Subscription",
     "abstractKey": null
@@ -57,20 +57,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "OverviewGreetingSubscription",
+    "name": "OverviewVerifySubscription",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "6ef066607375e6c2c7df0475ce35a62f",
+    "cacheID": "2422ab7d6e017e981639eef5a09c3b1f",
     "id": null,
     "metadata": {},
-    "name": "OverviewGreetingSubscription",
+    "name": "OverviewVerifySubscription",
     "operationKind": "subscription",
-    "text": "subscription OverviewGreetingSubscription(\n  $email: String!\n) {\n  greetings(email: $email)\n}\n"
+    "text": "subscription OverviewVerifySubscription(\n  $account_number: Int!\n) {\n  verify(account_number: $account_number)\n}\n"
   }
 };
 })();
 
-(node as any).hash = "b55d0cc15c9ddb17fa24c95835f1ab46";
+(node as any).hash = "acf6b4c44c88d5c85573fc274e730393";
 
 export default node;

@@ -41,6 +41,7 @@ type Query {
 type Mutation {
   login(userInput: LoginInput): PublicUser!
   register(registerInput: RegisterInput): PublicUser!
+  updateUser(updateInput: UpdateInput!): User!
   deleteUser: Boolean!
 
   createAnotherAccount: Account!
@@ -67,7 +68,11 @@ input RegisterInput {
   password: String!
   tax_id: String!
 }
-
+input UpdateInput {
+  firstname: String!
+  lastname: String!
+  email: String!
+}
 input LoginInput {
   email: String!
   password: String!
@@ -138,5 +143,7 @@ type msg {
   data: String
 }
 type Subscription {
-  greetings(msg: String): msg
+  greetings(email: String!): String
+  transactionSub(account_number: Int!): Transaction
+  verify(account_number: Int!): Boolean
 }

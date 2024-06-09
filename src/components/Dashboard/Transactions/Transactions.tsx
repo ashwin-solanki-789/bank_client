@@ -1,11 +1,6 @@
 import { graphql } from "relay-runtime";
 import { Card } from "@/components/ui/card";
-import type {
-  TransactionsMutation,
-  TransactionsMutation$data,
-} from "./__generated__/TransactionsMutation.graphql";
-import { useMutation } from "react-relay";
-import { useEffect, useState } from "react";
+import { useLazyLoadQuery, useMutation } from "react-relay";
 import {
   TransactionInterface,
   TransactionStatusEnum,
@@ -25,124 +20,131 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import type { Transactions_UpdateMutation } from "./__generated__/Transactions_UpdateMutation.graphql";
 import moment from "moment";
+import type { Transactions_UpdateMutation } from "./__generated__/Transactions_UpdateMutation.graphql";
+import { TransactionsQuery } from "./__generated__/TransactionsQuery.graphql";
 
 interface Props {
   account_id: number;
 }
 
 export default function Transactions({ account_id }: Props) {
-  const [data, setData] = useState<TransactionsMutation$data>();
-  const [currentPage, setCurrentPage] = useState(1);
-  const DEFAULT_LENGTH = 5;
-  const transactionPagination = graphql`
-    mutation TransactionsMutation(
-      $account_id: Int!
-      $length: Int
-      $page_number: Int
-    ) {
-      paginationTransaction(
-        account_id: $account_id
-        length: $length
-        page_number: $page_number
-      ) {
-        total
-        page_number
-        Transactions {
-          id
-          status
-          type
-          amount
-          description
-          createdAt
-          sender {
-            User {
-              firstname
-              lastname
-              email
-            }
-            account_number
+  const transaction_details = graphql`
+    query TransactionsQuery($account_id: Int!) {
+      getAllTransaction(account_id: $account_id) {
+        id
+        status
+        type
+        amount
+        description
+        createdAt
+        sender {
+          User {
+            firstname
+            lastname
+            email
           }
-          receiver {
-            User {
-              firstname
-              lastname
-              email
-            }
-            account_number
+          account_number
+        }
+        receiver {
+          User {
+            firstname
+            lastname
+            email
           }
+          account_number
         }
       }
     }
   `;
 
-  //   useEffect(() => {
-  //     useMutation()
-  //   },[])
+  const data = useLazyLoadQuery<TransactionsQuery>(transaction_details, {
+    account_id: account_id,
+  });
 
-  const [commitMutation, isLoading] = useMutation<TransactionsMutation>(
-    transactionPagination
-  );
+  // const subscriptionTransaction = graphql`
+  //   subscription TransactionsSubscription($account_number: Int!) {
+  //     transactionSub(account_number: $account_number) {
+  //       id
+  //       type
+  //       status
+  //       amount
+  //       sender {
+  //         User {
+  //           firstname
+  //           lastname
+  //           email
+  //         }
+  //       }
+  //       senderId
+  //       receiver {
+  //         User {
+  //           firstname
+  //           lastname
+  //           email
+  //         }
+  //       }
+  //       receiverId
+  //       status
+  //       description
+  //       createdAt
+  //     }
+  //   }
+  // `;
 
-  useEffect(() => {
-    commitMutation({
-      variables: {
-        account_id: account_id,
-        page_number: currentPage,
-        length: DEFAULT_LENGTH,
-      },
-      onCompleted(paginationTransaction) {
-        // const transactions = paginationTransaction?.Transactions;
-        setData(paginationTransaction);
-      },
-    });
-  }, [currentPage]);
+  // const subscriptionTransactionConfig: GraphQLSubscriptionConfig<TransactionsSubscription> =
+  //   {
+  //     subscription: subscriptionTransaction,
+  //     variables: { account_number: account_id },
+  //     onError: (error) => {
+  //       console.error(error);
+  //     },
+  //     updater: (store) => {
+  //       const payload = store.getRootField("transactionSub");
+  //       if (!payload) {
+  //         console.log("No payload found!");
+  //         return;
+  //       }
+  //       // const root = store.getRoot();
+  //       const transactionData = store.get(payload.getValue("id"));
 
-  if (isLoading) {
-    return <h1>loading...</h1>;
-  }
+  //       console.log({ transactionData });
 
-  if (data && data?.length <= 0) {
+  //       if (!transactionData) {
+  //         console.log("No transaction found for receive subscription.");
+  //         return;
+  //       }
+
+  //       const payload_status = payload.getValue("status");
+  //       console.log({ payload_status });
+  //       if (payload_status === "CANCELLED") {
+  //         transactionData.setValue(payload_status, "status");
+  //         console.log(
+  //           "Setting value done..",
+  //           transactionData.getValue("status")
+  //         );
+  //         return;
+  //       }
+  //     },
+  //   };
+
+  // useSubscription(subscriptionTransactionConfig);
+
+  if (data.getAllTransaction && data.getAllTransaction?.length <= 0) {
     return (
       <h1 className="font-sans font-bold text-2xl">No Transactions Found.</h1>
     );
   }
-  console.log(data);
   return (
     <div>
-      <div className="w-full pb-4">
-        <p className="text-right">
-          Page: {currentPage} of{" "}
-          {data?.paginationTransaction?.total
-            ? Math.ceil(data?.paginationTransaction?.total / DEFAULT_LENGTH)
-            : 1}
-        </p>
-      </div>
       <div className="flex flex-col gap-5">
-        {data?.paginationTransaction?.Transactions?.map(
-          (transaction, index) => (
-            <TransactionCard
-              data={transaction}
-              key={index}
-              isSender={transaction?.sender.account_number === account_id}
-            />
-          )
-        )}
-      </div>
-      <div className="flex gap-5 mt-5 justify-end">
-        <Button
-          disabled={currentPage <= 1}
-          onClick={() => setCurrentPage((prev) => prev - 1)}
-        >
-          Previous
-        </Button>
-        <Button
-          disabled={currentPage === Math.ceil(data?.paginationTransaction?.total / DEFAULT_LENGTH)}
-          onClick={() => setCurrentPage((prev) => prev + 1)}
-        >
-          Next
-        </Button>
+        {data.getAllTransaction?.map((transaction, index) => (
+          <TransactionCard
+            data={transaction}
+            key={index}
+            isSender={transaction?.sender.account_number === account_id}
+          />
+        ))}
       </div>
     </div>
   );
@@ -194,7 +196,6 @@ function TransactionCard({
         status: status,
       },
       onCompleted({ updateTransaction }) {
-        console.log(updateTransaction);
         window.location.reload();
       },
       onError(error) {
@@ -206,7 +207,7 @@ function TransactionCard({
   const user = isSender ? data.receiver.User : data.sender.User;
   return (
     <Card className="p-3">
-      <div className="grid grid-cols-3 justify-between items-center">
+      <div className="grid gap-4 lg:grid-cols-3 justify-between items-">
         <div className="flex items-center gap-4">
           <Avatar>
             <AvatarFallback>{`${user.firstname[0]}${user.lastname[0]}`}</AvatarFallback>
@@ -223,7 +224,7 @@ function TransactionCard({
             <p>{user.email}</p>
           </div>
         </div>
-        <div className="flex flex-col gap-5 items-center justify-center">
+        <div className="flex flex-col gap-5 lg:items-center lg:justify-center">
           <div className="font-sans">
             <span className="mr-2">Status:</span>
             {data.status === TransactionStatusEnum.COMPLETED ? (
@@ -243,7 +244,7 @@ function TransactionCard({
             <Badge>{data.type}</Badge>
           </div>
         </div>
-        <div className="flex gap-4 justify-end">
+        <div className="flex gap-4 lg:justify-end">
           <div className="flex text-xl items-center font-sans font-bold">
             <DollarSign color={isSender ? "red" : "green"} />
             {data.amount}
@@ -281,13 +282,13 @@ function TransactionCard({
           </DropdownMenu>
         </div>
       </div>
-      <div className="mt-3 font-sans font-bold text-lg flex justify-between items-center">
+      <div className="mt-3 font-sans font-bold text-md lg:text-lg flex flex-col lg:flex-row lg:justify-between lg:items-center">
         <div>
-          <span className="text-xl underline">Description</span> :{" "}
+          <span className="text-md lg:text-xl underline">Description</span> :{" "}
           {data.description}
         </div>
         <div>
-          <span className="text-xl underline">Date</span> :{" "}
+          <span className="text-md lg:text-xl underline">Date</span> :{" "}
           {moment(parseInt(data.createdAt)).format("DD-MM-YYYY HH:mm")}
         </div>
       </div>

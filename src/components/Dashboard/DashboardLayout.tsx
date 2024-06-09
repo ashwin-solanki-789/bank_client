@@ -17,11 +17,11 @@ type DashboardLayoutProps = {
 };
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
-  const naviagte = useNavigate();
+  const navigate = useNavigate();
   function logutUser() {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    naviagte(paths.auth.signIn);
+    navigate(paths.auth.signIn);
   }
 
   return (
@@ -47,8 +47,16 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Support</DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => navigate(paths.dashboard.profile)}
+              >
+                Profile
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => navigate(paths.dashboard.support)}
+              >
+                Support
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={logutUser}>Logout</DropdownMenuItem>
             </DropdownMenuContent>

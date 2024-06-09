@@ -4,6 +4,8 @@ import PrivateRoute from "./components/Auth/PrivateRoute";
 import SignIn from "./components/Auth/SignIn";
 import SignUp from "./components/Auth/SignUp";
 import Overview from "./components/Dashboard/Overview";
+import Profile from "./components/Dashboard/Profile";
+import Support from "./components/Dashboard/Support";
 
 function App() {
   return (
@@ -13,6 +15,8 @@ function App() {
       <Route path={paths.auth.signUp} element={<SignUp />} />
       <Route element={<PrivateRoute />}>
         <Route path={paths.dashboard.overview} element={<Overview />} />
+        <Route path={paths.dashboard.profile} element={<Profile />} />
+        <Route path={paths.dashboard.support} element={<Support />} />
       </Route>
     </Routes>
   );

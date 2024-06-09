@@ -68,55 +68,53 @@ export const OverviewComponent: React.FC<PropsInterface> = ({ account }) => {
 
   return (
     <Suspense fallback={<h1>Loading...</h1>}>
-      <div id="OverviewMain" className="p-5 w-full">
-        <div id="summaries" className="grid grid-flow-col gap-5 w-full">
-          <Card>
+      <div id="OverviewMain" className="py-5 lg:p-5 w-full">
+        <div id="summaries" className="grid lg:grid-flow-col gap-5 w-full">
+          <Card className="flex items-center justify-between lg:block">
             <CardHeader className="flex justify-between flex-row items-center">
-              <p className="font-sans text-xl">Balance</p>
+              <p className="font-sans text-md lg:text-xl">Balance</p>
             </CardHeader>
-            <CardContent className="flex items-center text-3xl font-black">
+            <CardContent className="flex items-center text-xl lg:text-3xl font-black pt-6 lg:pt-0">
               <DollarSign />
               {account?.balance}
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex justify-between flex-row items-center">
-              <p className="font-sans text-xl">Received</p>
+              <p className="font-sans text-md lg:text-xl">Received</p>
               <ArrowDownLeftSquare color="green" />
             </CardHeader>
-            <CardContent className="flex items-center text-3xl font-black">
+            <CardContent className="flex items-center text-xl lg:text-3xl font-black">
               <DollarSign />
               {transactions.transactionStats?.total_received}
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex justify-between flex-row items-center">
-              <p className="font-sans text-xl">Send</p>
+              <p className="font-sans text-md lg:text-xl">Send</p>
               <SquareArrowUpRight color="red" />
             </CardHeader>
-            <CardContent className="flex items-center text-3xl font-black">
+            <CardContent className="flex items-center text-xl lg:text-3xl font-black">
               <DollarSign />
               {transactions.transactionStats?.total_send}
             </CardContent>
           </Card>
         </div>
-        <div id="secondSection" className="flex flex-row gap-5">
-          <div className="w-6/12 py-3">
-            <Card>
-              <CardHeader>
-                {transactions.getAllTransaction &&
-                transactions.getAllTransaction.length > 0 ? (
-                  <Chart
-                    dataset={transactions.getAllTransaction}
-                    account_id={account?.account_number}
-                  />
-                ) : (
-                  <h1>No Transaction found.</h1>
-                )}
-              </CardHeader>
+        <div id="secondSection" className="flex flex-col lg:flex-row gap-5">
+          <div className="lg:w-6/12 py-3">
+            <Card className="p-3">
+              {transactions.getAllTransaction &&
+              transactions.getAllTransaction.length > 0 ? (
+                <Chart
+                  dataset={transactions.getAllTransaction}
+                  account_id={account?.account_number}
+                />
+              ) : (
+                <h1>No Transaction found.</h1>
+              )}
             </Card>
           </div>
-          <div className="w-6/12 py-3">
+          <div className="lg:w-6/12 py-3">
             <Card>
               <CardHeader>
                 <h1>Recent Transactions - Completed</h1>
@@ -139,6 +137,7 @@ export const OverviewComponent: React.FC<PropsInterface> = ({ account }) => {
                             ? transaction.receiver.User
                             : transaction?.sender.User
                         }
+                        id={transaction?.id}
                         amount={transaction?.amount}
                         key={index}
                       />
@@ -165,11 +164,12 @@ interface TransactionType {
     lastname: string;
     email: string;
   };
+  id: string;
   amount: number;
 }
-function TransactionCard({ type, details, amount }: TransactionType) {
+function TransactionCard({ type, details, amount, id }: TransactionType) {
   return (
-    <div className="px-2 flex items-center justify-between">
+    <div className="lg:px-2 flex items-center justify-between">
       <div className="flex gap-2 items-center">
         <Avatar>
           <AvatarFallback>{`${details.firstname[0]}${details.lastname[0]}`}</AvatarFallback>
@@ -180,8 +180,11 @@ function TransactionCard({ type, details, amount }: TransactionType) {
         </div>
       </div>
       <div className="flex items-center">
-        <DollarSign color={type === "received" ? "green" : "red"} />
-        <p className="font-sans font-bold text-xl">{amount}</p>
+        <DollarSign
+          className="h-4 w-4 lg:h-7 lg:w-7"
+          color={type === "received" ? "green" : "red"}
+        />
+        <p className="font-sans font-bold text-sm lg:text-xl">{amount}</p>
       </div>
     </div>
   );

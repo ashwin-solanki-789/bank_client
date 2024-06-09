@@ -1,6 +1,6 @@
-import { graphql } from "relay-runtime";
+import { GraphQLSubscriptionConfig, graphql } from "relay-runtime";
 import DashboardLayout from "./DashboardLayout";
-import { useLazyLoadQuery } from "react-relay";
+import { useLazyLoadQuery, useSubscription } from "react-relay";
 import type { OverviewQuery } from "./__generated__/OverviewQuery.graphql";
 import { useNavigate } from "react-router-dom";
 import { paths } from "@/paths";
@@ -9,7 +9,6 @@ import { OverviewComponent } from "./OverviewComponents";
 import NewTransactionDialog from "./OverviewComponents/NewTransactionDialog";
 import { Suspense } from "react";
 import Transactions from "./Transactions/Transactions";
-// import type { OverviewGreetingSubscription } from "./__generated__/OverviewGreetingSubscription.graphql";
 
 export default function Overview() {
   const navigate = useNavigate();
@@ -34,24 +33,12 @@ export default function Overview() {
     }
   `;
 
-  // const subscriptionExample = graphql`
-  //   subscription OverviewGreetingSubscription {
-  //     greetings {
-  //       data
-  //     }
-  //   }
-  // `;
-
   const data = useLazyLoadQuery<OverviewQuery>(getUserQuery, {});
 
-  // const greeting = useSubscription<OverviewGreetingSubscription>(
-  //   subscriptionExample,
-  //   {}
-  // );
-
-  // console.log(queryRef);
-
-  if (data.getUser.status_code === 601) {
+  if (
+    data.getUser.status_code === 601 ||
+    (data.getUser.accounts && data.getUser.accounts.length <= 0)
+  ) {
     localStorage.clear();
     navigate(paths.auth.signIn);
     return;
@@ -59,14 +46,16 @@ export default function Overview() {
 
   return (
     <DashboardLayout>
-      <h1 className="text-2xl font-bold">Dashboard</h1>
+      <h1 className="text-md lg:text-2xl font-bold">
+        Dashboard (Account ID - {data?.getUser?.accounts[0]?.account_number})
+      </h1>
       <Tabs defaultValue="overview" className="mt-5">
-        <div className="flex justify-between">
-          <TabsList className="grid grid-cols-2 gap-6 w-2/6">
+        <div className="flex justify-between flex-col lg:flex-row gap-2">
+          <TabsList className="grid grid-cols-2 gap-6 lg:w-2/6">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="transactions">Transactions</TabsTrigger>
           </TabsList>
-          <div id="buttonGroup" className="flex items-center">
+          <div id="buttonGroup" className="flex items-center justify-end">
             <NewTransactionDialog
               btnLabel="Send Money"
               type={"NORMAL"}

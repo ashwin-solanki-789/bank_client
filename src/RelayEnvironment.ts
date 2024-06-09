@@ -11,17 +11,16 @@ import {
 } from "relay-runtime";
 import { getStorage } from "./utils/sessionStorage";
 import { createClient } from "graphql-ws";
+import { SubscriptionClient } from "subscriptions-transport-ws";
+
+const subscriptionClient = new SubscriptionClient(
+  "ws://localhost:4000/graphql",
+  {
+    reconnect: true,
+  }
+);
 
 const HTTP_ENDPOINT = import.meta.env.VITE_GRAPHQL_ENDPOINT;
-
-const wsClient = createClient({
-  url: "ws://localhost:4000/graphql",
-  connectionParams: () => {
-    return {
-      Authorization: `Bearer ${getStorage("token")}`,
-    };
-  },
-});
 
 const fetchFn = (
   setError: (error: { code: number; message: string } | null) => void
@@ -52,21 +51,25 @@ const fetchFn = (
   };
 };
 
-const subscribe: SubscribeFunction = (
+function subscribe(
   operation: RequestParameters,
   variables: Variables
-): Observable<any> => {
+): Observable<any> {
   return Observable.create((sink) => {
-    return wsClient.subscribe(
-      {
-        operationName: operation.name,
-        query: operation.text as string,
+    const subscription = subscriptionClient
+      .request({
+        query: operation.text!,
         variables,
-      },
-      sink
-    );
+      })
+      .subscribe({
+        next: sink.next.bind(sink),
+        error: sink.error.bind(sink),
+        complete: sink.complete.bind(sink),
+      });
+
+    return () => subscription.unsubscribe();
   });
-};
+}
 
 function createRelayEnvironment(
   setError: (error: { code: number; message: string } | null) => void
