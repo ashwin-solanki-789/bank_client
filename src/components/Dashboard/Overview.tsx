@@ -1,6 +1,6 @@
-import { GraphQLSubscriptionConfig, graphql } from "relay-runtime";
+import { graphql } from "relay-runtime";
 import DashboardLayout from "./DashboardLayout";
-import { useLazyLoadQuery, useSubscription } from "react-relay";
+import { useLazyLoadQuery } from "react-relay";
 import type { OverviewQuery } from "./__generated__/OverviewQuery.graphql";
 import { useNavigate } from "react-router-dom";
 import { paths } from "@/paths";
@@ -47,7 +47,9 @@ export default function Overview() {
   return (
     <DashboardLayout>
       <h1 className="text-md lg:text-2xl font-bold">
-        Dashboard (Account ID - {data?.getUser?.accounts[0]?.account_number})
+        {data?.getUser?.accounts && data?.getUser?.accounts.length > 0
+          ? `Dashboard (Account ID - ${data?.getUser?.accounts[0]?.account_number})`
+          : null}
       </h1>
       <Tabs defaultValue="overview" className="mt-5">
         <div className="flex justify-between flex-col lg:flex-row gap-2">
@@ -56,19 +58,23 @@ export default function Overview() {
             <TabsTrigger value="transactions">Transactions</TabsTrigger>
           </TabsList>
           <div id="buttonGroup" className="flex items-center justify-end">
-            <NewTransactionDialog
-              btnLabel="Send Money"
-              type={"NORMAL"}
-              header="Send"
-              account_details={data.getUser.accounts[0]}
-            />
-            <div className="w-[2px] h-5 bg-white"></div>
-            <NewTransactionDialog
-              btnLabel="Request Money"
-              type={"REQUEST"}
-              header="Request"
-              account_details={data.getUser.accounts[0]}
-            />
+            {data.getUser.accounts && data.getUser.accounts[0] ? (
+              <>
+                <NewTransactionDialog
+                  btnLabel="Send Money"
+                  type={"NORMAL"}
+                  header="Send"
+                  account_details={data.getUser.accounts[0]}
+                />
+                <div className="w-[2px] h-5 bg-white"></div>
+                <NewTransactionDialog
+                  btnLabel="Request Money"
+                  type={"REQUEST"}
+                  header="Request"
+                  account_details={data.getUser.accounts[0]}
+                />
+              </>
+            ) : null}
           </div>
         </div>
         <TabsContent value="overview">

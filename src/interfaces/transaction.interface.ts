@@ -13,15 +13,15 @@ export enum TransactionTypeEnum {
 }
 
 export interface TransactionInterface {
-  id: string;
-  description: string;
-  status: TransactionStatusEnum;
-  type: TransactionTypeEnum;
-  amount: number;
-  senderId: number;
-  receiverId: number;
-  createdAt: string;
-  updatedAt: string;
-  sender: PublicAccount;
-  receiver: PublicAccount;
+  readonly id: string;
+  readonly description: string | null | undefined;
+  readonly status: TransactionStatusEnum;
+  readonly type: TransactionTypeEnum;
+  readonly amount: number;
+  readonly senderId: number;
+  readonly receiverId: number;
+  readonly createdAt: string | null | undefined;
+  // updatedAt: string;
+  readonly sender: PublicAccount;
+  readonly receiver: PublicAccount;
 }

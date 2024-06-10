@@ -93,8 +93,7 @@ export default function Profile() {
       email: "",
     },
   });
-  const [commitMutation, isLoading] =
-    useMutation<ProfileEditMutation>(editMutation);
+  const [commitMutation] = useMutation<ProfileEditMutation>(editMutation);
   const data = useLazyLoadQuery<ProfileQuery>(getUserQuery, {});
 
   useEffect(() => {
@@ -106,10 +105,9 @@ export default function Profile() {
       navigate(paths.auth.signIn);
       return;
     }
-
-    form.setValue("firstName", data.getUser.firstname);
-    form.setValue("lastName", data.getUser.lastname);
-    form.setValue("email", data.getUser.email);
+    form.setValue("firstName", data.getUser.firstname as string);
+    form.setValue("lastName", data.getUser.lastname as string);
+    form.setValue("email", data.getUser.email as string);
   }, [data]);
 
   function onSubmit(data: z.infer<typeof EditSchema>) {
@@ -124,7 +122,7 @@ export default function Profile() {
       onCompleted() {
         window.location.reload();
       },
-      onError(err) {
+      onError() {
         form.setError("email", { message: "Email ID already exist" });
       },
     });
@@ -243,12 +241,14 @@ export default function Profile() {
             <p className="font-sans lg:text-2xl">
               Tax ID - {data.getUser.tax_id}
             </p>
-            <p className="font-sans lg:text-2xl">
-              Created Date -{" "}
-              {moment(parseInt(data.getUser.createdAt)).format(
-                "DD-MM-YYYY HH:mm"
-              )}
-            </p>
+            {data.getUser.createdAt && (
+              <p className="font-sans lg:text-2xl">
+                Created Date -{" "}
+                {moment(parseInt(data.getUser.createdAt)).format(
+                  "DD-MM-YYYY HH:mm"
+                )}
+              </p>
+            )}
           </CardFooter>
         </Card>
         {data.getUser.accounts &&
@@ -262,12 +262,14 @@ export default function Profile() {
                 <p className="flex font-sans text-xl items-center">
                   <DollarSign /> {account?.balance}
                 </p>
-                <p className="text-sm font-sans">
-                  Created:{" "}
-                  {moment(parseInt(account?.createdAt)).format(
-                    "DD-MM-YYYY HH:mm"
-                  )}
-                </p>
+                {account?.createdAt && (
+                  <p className="text-sm font-sans">
+                    Created:{" "}
+                    {moment(parseInt(account?.createdAt)).format(
+                      "DD-MM-YYYY HH:mm"
+                    )}
+                  </p>
+                )}
               </div>
             </Card>
           ))}

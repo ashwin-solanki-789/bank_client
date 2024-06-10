@@ -4,15 +4,12 @@ import {
   RecordSource,
   Store,
   FetchFunction,
-  SubscribeFunction,
   RequestParameters,
   Variables,
   Observable,
 } from "relay-runtime";
 import { getStorage } from "./utils/sessionStorage";
-import { createClient } from "graphql-ws";
 import { SubscriptionClient } from "subscriptions-transport-ws";
-
 const subscriptionClient = new SubscriptionClient(
   "ws://localhost:4000/graphql",
   {

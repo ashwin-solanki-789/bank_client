@@ -12,10 +12,13 @@ import { useLazyLoadQuery } from "react-relay";
 import Chart from "./Chart";
 
 interface PropsInterface {
-  account: {
-    account_number: number;
-    balance: number;
-  };
+  account:
+    | {
+        account_number: number;
+        balance: number;
+      }
+    | null
+    | undefined;
 }
 
 export const OverviewComponent: React.FC<PropsInterface> = ({ account }) => {
@@ -63,8 +66,16 @@ export const OverviewComponent: React.FC<PropsInterface> = ({ account }) => {
 
   const transactions = useLazyLoadQuery<OverviewComponentsQuery>(
     transaction_details,
-    { account_id: account?.account_number, status: "COMPLETED", length: 5 }
+    {
+      account_id: account?.account_number as number,
+      status: "COMPLETED",
+      length: 5,
+    }
   );
+
+  if (!account) {
+    return <h1>Error Occured..</h1>;
+  }
 
   return (
     <Suspense fallback={<h1>Loading...</h1>}>
@@ -106,7 +117,7 @@ export const OverviewComponent: React.FC<PropsInterface> = ({ account }) => {
               {transactions.getAllTransaction &&
               transactions.getAllTransaction.length > 0 ? (
                 <Chart
-                  dataset={transactions.getAllTransaction}
+                  dataset={transactions}
                   account_id={account?.account_number}
                 />
               ) : (
@@ -134,11 +145,10 @@ export const OverviewComponent: React.FC<PropsInterface> = ({ account }) => {
                         details={
                           account.account_number ===
                           transaction?.sender.account_number
-                            ? transaction.receiver.User
-                            : transaction?.sender.User
+                            ? transaction?.receiver?.User
+                            : transaction?.sender?.User
                         }
-                        id={transaction?.id}
-                        amount={transaction?.amount}
+                        amount={transaction?.amount as number}
                         key={index}
                       />
                     ))
@@ -159,24 +169,27 @@ export const OverviewComponent: React.FC<PropsInterface> = ({ account }) => {
 
 interface TransactionType {
   type: string;
-  details: {
-    firstname: string;
-    lastname: string;
-    email: string;
-  };
-  id: string;
+  details:
+    | {
+        firstname: string;
+        lastname: string | null | undefined;
+        email: string;
+      }
+    | undefined;
   amount: number;
 }
-function TransactionCard({ type, details, amount, id }: TransactionType) {
+function TransactionCard({ type, details, amount }: TransactionType) {
   return (
     <div className="lg:px-2 flex items-center justify-between">
       <div className="flex gap-2 items-center">
         <Avatar>
-          <AvatarFallback>{`${details.firstname[0]}${details.lastname[0]}`}</AvatarFallback>
+          <AvatarFallback>{`${details?.firstname[0]}${
+            details?.lastname && details?.lastname[0]
+          }`}</AvatarFallback>
         </Avatar>
         <div className="flex flex-col text-sm">
-          <p>{`${details.firstname} ${details.lastname}`}</p>
-          <p>{details.email}</p>
+          <p>{`${details?.firstname} ${details?.lastname}`}</p>
+          <p>{details?.email}</p>
         </div>
       </div>
       <div className="flex items-center">

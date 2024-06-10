@@ -185,6 +185,10 @@ export default function NewTransactionDialog({
     if (!isVerified) {
       form.setError("account_number", { message: "Not Verified" });
     }
+    if (!account_details) {
+      form.setError("description", { message: "Not Verified" });
+      return;
+    }
     if (type === "NORMAL") {
       createTransactionFn(
         account_details.account_number,

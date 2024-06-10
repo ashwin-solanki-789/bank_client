@@ -1,10 +1,7 @@
 import { graphql } from "relay-runtime";
 import { Card } from "@/components/ui/card";
 import { useLazyLoadQuery, useMutation } from "react-relay";
-import {
-  TransactionInterface,
-  TransactionStatusEnum,
-} from "@/interfaces/transaction.interface";
+import { TransactionStatusEnum } from "@/interfaces/transaction.interface";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -22,7 +19,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import moment from "moment";
 import type { Transactions_UpdateMutation } from "./__generated__/Transactions_UpdateMutation.graphql";
-import { TransactionsQuery } from "./__generated__/TransactionsQuery.graphql";
+import type {
+  TransactionsQuery,
+  TransactionsQuery$data,
+} from "./__generated__/TransactionsQuery.graphql";
 
 interface Props {
   account_id: number;
@@ -62,74 +62,6 @@ export default function Transactions({ account_id }: Props) {
     account_id: account_id,
   });
 
-  // const subscriptionTransaction = graphql`
-  //   subscription TransactionsSubscription($account_number: Int!) {
-  //     transactionSub(account_number: $account_number) {
-  //       id
-  //       type
-  //       status
-  //       amount
-  //       sender {
-  //         User {
-  //           firstname
-  //           lastname
-  //           email
-  //         }
-  //       }
-  //       senderId
-  //       receiver {
-  //         User {
-  //           firstname
-  //           lastname
-  //           email
-  //         }
-  //       }
-  //       receiverId
-  //       status
-  //       description
-  //       createdAt
-  //     }
-  //   }
-  // `;
-
-  // const subscriptionTransactionConfig: GraphQLSubscriptionConfig<TransactionsSubscription> =
-  //   {
-  //     subscription: subscriptionTransaction,
-  //     variables: { account_number: account_id },
-  //     onError: (error) => {
-  //       console.error(error);
-  //     },
-  //     updater: (store) => {
-  //       const payload = store.getRootField("transactionSub");
-  //       if (!payload) {
-  //         console.log("No payload found!");
-  //         return;
-  //       }
-  //       // const root = store.getRoot();
-  //       const transactionData = store.get(payload.getValue("id"));
-
-  //       console.log({ transactionData });
-
-  //       if (!transactionData) {
-  //         console.log("No transaction found for receive subscription.");
-  //         return;
-  //       }
-
-  //       const payload_status = payload.getValue("status");
-  //       console.log({ payload_status });
-  //       if (payload_status === "CANCELLED") {
-  //         transactionData.setValue(payload_status, "status");
-  //         console.log(
-  //           "Setting value done..",
-  //           transactionData.getValue("status")
-  //         );
-  //         return;
-  //       }
-  //     },
-  //   };
-
-  // useSubscription(subscriptionTransactionConfig);
-
   if (data.getAllTransaction && data.getAllTransaction?.length <= 0) {
     return (
       <h1 className="font-sans font-bold text-2xl">No Transactions Found.</h1>
@@ -138,25 +70,28 @@ export default function Transactions({ account_id }: Props) {
   return (
     <div>
       <div className="flex flex-col gap-5">
-        {data.getAllTransaction?.map((transaction, index) => (
-          <TransactionCard
-            data={transaction}
-            key={index}
-            isSender={transaction?.sender.account_number === account_id}
-          />
-        ))}
+        {/* {data.getAllTransaction?.map((transaction, index) => ( */}
+        <TransactionCard
+          data={data}
+          // key={index}
+          account_id={account_id}
+          // isSender={transaction?.sender.account_number === account_id}
+        />
+        {/* ))} */}
       </div>
     </div>
   );
 }
 
-function TransactionCard({
+interface TransactionCardProps {
+  data: TransactionsQuery$data;
+  account_id: number;
+}
+
+const TransactionCard: React.FC<TransactionCardProps> = ({
   data,
-  isSender,
-}: {
-  data: TransactionInterface;
-  isSender: boolean;
-}) {
+  account_id,
+}: TransactionCardProps) => {
   const updateSchema = graphql`
     mutation Transactions_UpdateMutation(
       $transaction_id: ID!
@@ -189,13 +124,18 @@ function TransactionCard({
 
   const [commitMutation] =
     useMutation<Transactions_UpdateMutation>(updateSchema);
-  function updateTransaction(status: TransactionStatusEnum) {
+
+  function updateTransaction(status: TransactionStatusEnum, id: string) {
+    if (!id) {
+      console.error("Error Occured");
+      return;
+    }
     commitMutation({
       variables: {
-        transaction_id: data.id,
+        transaction_id: id,
         status: status,
       },
-      onCompleted({ updateTransaction }) {
+      onCompleted() {
         window.location.reload();
       },
       onError(error) {
@@ -204,94 +144,124 @@ function TransactionCard({
     });
   }
 
-  const user = isSender ? data.receiver.User : data.sender.User;
   return (
-    <Card className="p-3">
-      <div className="grid gap-4 lg:grid-cols-3 justify-between items-">
-        <div className="flex items-center gap-4">
-          <Avatar>
-            <AvatarFallback>{`${user.firstname[0]}${user.lastname[0]}`}</AvatarFallback>
-          </Avatar>
-          <div className="font-sans text-sm">
-            <div className="flex gap-2 items-center">
-              <p>{`${user.firstname} ${user.lastname}`}</p>
-              {isSender ? (
-                <SquareArrowUpRight className="h-4" color="red" />
-              ) : (
-                <ArrowDownLeftSquare className="h-4" color="green" />
-              )}
+    data.getAllTransaction &&
+    data.getAllTransaction?.map((transaction, index) => {
+      const user =
+        transaction?.sender.account_number === account_id
+          ? transaction?.receiver.User
+          : transaction?.sender.User;
+      return (
+        <Card className="p-3" key={index}>
+          <div className="grid gap-4 lg:grid-cols-3 justify-between items-">
+            <div className="flex items-center gap-4">
+              <Avatar>
+                <AvatarFallback>{`${user?.firstname[0]}${
+                  user?.lastname && user?.lastname[0]
+                }`}</AvatarFallback>
+              </Avatar>
+              <div className="font-sans text-sm">
+                <div className="flex gap-2 items-center">
+                  <p>{`${user?.firstname} ${user?.lastname}`}</p>
+                  {transaction?.sender.account_number === account_id ? (
+                    <SquareArrowUpRight className="h-4" color="red" />
+                  ) : (
+                    <ArrowDownLeftSquare className="h-4" color="green" />
+                  )}
+                </div>
+                <p>{user?.email}</p>
+              </div>
             </div>
-            <p>{user.email}</p>
-          </div>
-        </div>
-        <div className="flex flex-col gap-5 lg:items-center lg:justify-center">
-          <div className="font-sans">
-            <span className="mr-2">Status:</span>
-            {data.status === TransactionStatusEnum.COMPLETED ? (
-              <Badge className="bg-green-500" variant={"outline"}>
-                COMPLETED
-              </Badge>
-            ) : data.status === TransactionStatusEnum.PENDING ? (
-              <Badge className="bg-yellow-500" variant={"outline"}>
-                PENDING
-              </Badge>
-            ) : (
-              <Badge variant={"destructive"}>{data.status}</Badge>
-            )}
-          </div>
-          <div className="font-sans">
-            <span className="mr-2">Type:</span>
-            <Badge>{data.type}</Badge>
-          </div>
-        </div>
-        <div className="flex gap-4 lg:justify-end">
-          <div className="flex text-xl items-center font-sans font-bold">
-            <DollarSign color={isSender ? "red" : "green"} />
-            {data.amount}
-          </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              className={
-                data.status === TransactionStatusEnum.PENDING ? "" : "invisible"
-              }
-            >
-              <Button className="h-8 w-8 p-0" size={"sm"} variant={"ghost"}>
-                <EllipsisVertical className="h-5" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {isSender && (
-                <DropdownMenuItem
-                  className="cursor-pointer"
-                  onClick={() =>
-                    updateTransaction(TransactionStatusEnum.COMPLETED)
+            <div className="flex flex-col gap-5 lg:items-center lg:justify-center">
+              <div className="font-sans">
+                <span className="mr-2">Status:</span>
+                {transaction?.status === TransactionStatusEnum.COMPLETED ? (
+                  <Badge className="bg-green-500" variant={"outline"}>
+                    COMPLETED
+                  </Badge>
+                ) : transaction?.status === TransactionStatusEnum.PENDING ? (
+                  <Badge className="bg-yellow-500" variant={"outline"}>
+                    PENDING
+                  </Badge>
+                ) : (
+                  <Badge variant={"destructive"}>{transaction?.status}</Badge>
+                )}
+              </div>
+              <div className="font-sans">
+                <span className="mr-2">Type:</span>
+                <Badge>{transaction?.type}</Badge>
+              </div>
+            </div>
+            <div className="flex gap-4 lg:justify-end">
+              <div className="flex text-xl items-center font-sans font-bold">
+                <DollarSign
+                  color={
+                    transaction?.sender.account_number === account_id
+                      ? "red"
+                      : "green"
+                  }
+                />
+                {transaction?.amount}
+              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger
+                  className={
+                    transaction?.status === TransactionStatusEnum.PENDING
+                      ? ""
+                      : "invisible"
                   }
                 >
-                  Accept Request
-                </DropdownMenuItem>
-              )}
-              <DropdownMenuItem
-                className="cursor-pointer"
-                onClick={() =>
-                  updateTransaction(TransactionStatusEnum.CANCELLED)
-                }
-              >
-                Cancel
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </div>
-      <div className="mt-3 font-sans font-bold text-md lg:text-lg flex flex-col lg:flex-row lg:justify-between lg:items-center">
-        <div>
-          <span className="text-md lg:text-xl underline">Description</span> :{" "}
-          {data.description}
-        </div>
-        <div>
-          <span className="text-md lg:text-xl underline">Date</span> :{" "}
-          {moment(parseInt(data.createdAt)).format("DD-MM-YYYY HH:mm")}
-        </div>
-      </div>
-    </Card>
+                  <Button className="h-8 w-8 p-0" size={"sm"} variant={"ghost"}>
+                    <EllipsisVertical className="h-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  {transaction?.sender.account_number === account_id && (
+                    <DropdownMenuItem
+                      className="cursor-pointer"
+                      onClick={() =>
+                        updateTransaction(
+                          TransactionStatusEnum.COMPLETED,
+                          transaction.id
+                        )
+                      }
+                    >
+                      Accept Request
+                    </DropdownMenuItem>
+                  )}
+                  {transaction?.id && (
+                    <DropdownMenuItem
+                      className="cursor-pointer"
+                      onClick={() =>
+                        updateTransaction(
+                          TransactionStatusEnum.CANCELLED,
+                          transaction.id
+                        )
+                      }
+                    >
+                      Cancel
+                    </DropdownMenuItem>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
+          <div className="mt-3 font-sans font-bold text-md lg:text-lg flex flex-col lg:flex-row lg:justify-between lg:items-center">
+            <div>
+              <span className="text-md lg:text-xl underline">Description</span>{" "}
+              : {transaction?.description}
+            </div>
+            {transaction?.createdAt && (
+              <div>
+                <span className="text-md lg:text-xl underline">Date</span> :{" "}
+                {moment(parseInt(transaction.createdAt)).format(
+                  "DD-MM-YYYY HH:mm"
+                )}
+              </div>
+            )}
+          </div>
+        </Card>
+      );
+    })
   );
-}
+};
