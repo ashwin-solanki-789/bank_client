@@ -87,8 +87,9 @@ export default function SignUp() {
     }
   `;
 
-  const [commitMutation, isMutationInFlight] =
-    useMutation<SignUpMutation>(registerMutation);
+  const [commitMutation, isMutationInFlight] = useMutation<SignUpMutation>(
+    registerMutation
+  );
 
   function onSubmit(data: z.infer<typeof RegisterSchema>) {
     commitMutation({
@@ -154,7 +155,7 @@ export default function SignUp() {
                         control={form.control}
                         name="firstName"
                         render={({ field }) => (
-                          <FormItem>
+                          <FormItem className="w-full">
                             <FormLabel>First Name</FormLabel>
                             <FormControl>
                               <Input
@@ -171,7 +172,7 @@ export default function SignUp() {
                         control={form.control}
                         name="lastName"
                         render={({ field }) => (
-                          <FormItem>
+                          <FormItem className="w-full">
                             <FormLabel>Last Name</FormLabel>
                             <FormControl>
                               <Input
@@ -224,7 +225,7 @@ export default function SignUp() {
                         control={form.control}
                         name="password"
                         render={({ field }) => (
-                          <FormItem>
+                          <FormItem className="w-full">
                             <FormLabel>Password</FormLabel>
                             <FormControl>
                               <Input
@@ -242,7 +243,7 @@ export default function SignUp() {
                         control={form.control}
                         name="confirm_password"
                         render={({ field }) => (
-                          <FormItem>
+                          <FormItem className="w-full">
                             <FormLabel>Confirm Password</FormLabel>
                             <FormControl>
                               <Input
